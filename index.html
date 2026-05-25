@@ -431,14 +431,7 @@ body {
   position: relative;
 }
 
-.tl::before {
-  content: '';
-  position: absolute;
-  left: 52px;
-  top: 6px; bottom: 6px;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--blush2) 15%, var(--blush2) 85%, transparent);
-}
+.tl::before { display: none; }
 
 .tl__row {
   display: grid;
@@ -767,7 +760,7 @@ footer {
   .gallery__item { height: auto; }
   .gallery__item--wide { height: auto; }
   .gallery { grid-template-rows: 260px 280px; }
-  .tl::before { left: 58px; }
+  .tl::before { display: none; }
 }
 
 @media (min-width: 900px) {
@@ -788,7 +781,7 @@ footer {
   .gallery__item img { object-position: center center; }
   .timeline-wrap { padding: 80px 60px; }
   .tl { max-width: 600px; }
-  .tl::before { left: 68px; }
+  .tl::before { display: none; }
   .tl__row { grid-template-columns: 120px 1fr; }
   .tl__time { font-size: 24px; }
   .dc { padding: 80px 60px; }
@@ -832,7 +825,7 @@ footer {
   .gallery__item img { object-position: center center; }
   .timeline-wrap { padding: 80px 60px; }
   .tl { max-width: 600px; }
-  .tl::before { left: 68px; }
+  .tl::before { display: none; }
   .tl__row { grid-template-columns: 120px 1fr; }
   .tl__time { font-size: 24px; }
   .dc { padding: 80px 60px; }
@@ -1020,7 +1013,29 @@ footer {
     <div style="border:1px solid var(--blush2);padding:32px 24px;position:relative;">
       <div style="position:absolute;inset:6px;border:1px solid rgba(196,122,96,0.12);pointer-events:none;"></div>
       <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5vw,26px);font-style:italic;font-weight:300;color:var(--dark);margin-bottom:14px;line-height:1.3;">Tu hermosa presencia<br>ya es el mejor regalo</p>
-      <p style="font-size:13px;font-weight:300;line-height:1.85;color:var(--text);">Si aun así querés sumarte con un detalle, podés hacerlo a través de una transferencia bancaria. Consultanos el día del evento y con gusto te damos los datos.</p>
+      <p style="font-size:13px;font-weight:300;line-height:1.85;color:var(--text);margin-bottom:20px;">Si aun así querés sumarte con un detalle, podés hacerlo a través de una transferencia bancaria.</p>
+      <button onclick="toggleDatos()" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;background:transparent;border:1px solid var(--rose);color:var(--terra);font-family:'Jost',sans-serif;font-size:10px;font-weight:300;letter-spacing:0.25em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;width:100%;" id="btn-datos">
+        <span id="btn-label">Ver datos bancarios</span>
+        <span id="btn-arrow" style="font-size:14px;transition:transform 0.3s;">↓</span>
+      </button>
+      <div id="datos-bancarios" style="display:none;margin-top:16px;border-top:1px solid var(--blush1);padding-top:16px;">
+        <div style="margin-bottom:14px;">
+          <p style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">CBU</p>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <code style="font-size:12px;font-family:monospace;color:var(--dark);flex:1;word-break:break-all;letter-spacing:0.05em;">0070668730004011999710</code>
+            <button onclick="copiar('0070668730004011999710','cbu-ok')" style="padding:7px 12px;background:var(--dark);border:none;color:var(--blush1);font-family:'Jost',sans-serif;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;">Copiar</button>
+          </div>
+          <span id="cbu-ok" style="font-size:11px;color:var(--terra);display:none;margin-top:4px;">✓ Copiado</span>
+        </div>
+        <div>
+          <p style="font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Alias</p>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <code style="font-size:13px;font-family:monospace;color:var(--dark);flex:1;">caamaya20.gal</code>
+            <button onclick="copiar('caamaya20.gal','alias-ok')" style="padding:7px 12px;background:var(--dark);border:none;color:var(--blush1);font-family:'Jost',sans-serif;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;">Copiar</button>
+          </div>
+          <span id="alias-ok" style="font-size:11px;color:var(--terra);display:none;margin-top:4px;">✓ Copiado</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1098,6 +1113,31 @@ var obs = new IntersectionObserver(function(entries) {
   entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('on'); });
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+function toggleDatos() {
+  var d = document.getElementById('datos-bancarios');
+  var arrow = document.getElementById('btn-arrow');
+  var label = document.getElementById('btn-label');
+  var open = d.style.display === 'block';
+  d.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+  label.textContent = open ? 'Ver datos bancarios' : 'Ocultar datos bancarios';
+}
+function copiar(texto, idOk) {
+  var el = document.getElementById(idOk);
+  try {
+    navigator.clipboard.writeText(texto).then(function(){ el.style.display='block'; setTimeout(function(){ el.style.display='none'; }, 2500); });
+  } catch(e) {
+    var ta = document.createElement('textarea');
+    ta.value = texto;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.style.display = 'block';
+    setTimeout(function(){ el.style.display = 'none'; }, 2500);
+  }
+}
 </script>
 </body>
 </html>
